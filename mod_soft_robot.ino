@@ -12,6 +12,8 @@ int offSwitch = 3;
 int pumpControl = 5;
 int inletValve = 6;
 int outletValve = 7;
+int ledPin = 13;
+int pressurePin = A5;
 
 // the setup routine runs once when you press reset:
 void setup() {                
@@ -26,24 +28,30 @@ void setup() {
 
 // the loop routine runs over and over again forever:
 void loop() {
+  int sensorValue = analogRead(pressurePin);
+  Serial.print("Pressure: ");
+  Serial.println(sensorValue);
   if (digitalRead(onSwitch) == HIGH) {
     Serial.println("Turning on the pump.");
     // Open the inlet valve
-    analogWrite(inletValve, 255);
+    digitalWrite(inletValve,LOW);
+    digitalWrite(outletValve,HIGH);
+    digitalWrite(ledPin,HIGH);
     // Turn on the pump for 2 seconds
     analogWrite(pumpControl, 255);
     delay(2000);
     // Turn off the pump
     analogWrite(pumpControl, 0);
     // Close the valve
-    analogWrite(inletValve, 0);
-  } else if (digitalRead(offSwitch) == HIGH) {
+    digitalWrite(inletValve,HIGH);
+    digitalWrite(ledPin,LOW);
+  } else if (digitalRead(onSwitch) == LOW) {
     // TOFIX: get this working, switch works on power instead of ground
     // Open the release valve
     Serial.println("Releasing pressure");
-    analogWrite(outletValve, 255);
+    digitalWrite(outletValve,LOW);
     delay(2000);
-    analogWrite(outletValve, 0);
+    digitalWrite(outletValve,HIGH);
   }
   delay(1);
 }
